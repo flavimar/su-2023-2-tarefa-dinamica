@@ -3,7 +3,7 @@
 Nome | Matricula
 ----- | -------
 Flavimar da Silva Almeida | 201905529
-Giancarlo Oliveira | 201905532
+Giancarlo Oliveira | 201905531
 
 ## Descrição da aplicação
 A aplicação consiste na distribuição dinâmica de tarefas para pessoas no contexto de uma smart space
