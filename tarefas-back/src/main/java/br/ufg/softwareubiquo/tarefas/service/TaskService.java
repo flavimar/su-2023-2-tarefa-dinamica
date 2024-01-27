@@ -1,11 +1,10 @@
 package br.ufg.softwareubiquo.tarefas.service;
 
+
 import br.ufg.softwareubiquo.tarefas.models.Task;
 import br.ufg.softwareubiquo.tarefas.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 

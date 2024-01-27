@@ -1,12 +1,8 @@
 package br.ufg.softwareubiquo.tarefas.controllers;
 
-import br.ufg.softwareubiquo.tarefas.dtos.AuthRequestDTO;
-import br.ufg.softwareubiquo.tarefas.dtos.JwtResponseDTO;
-import br.ufg.softwareubiquo.tarefas.enums.UserRole;
 import br.ufg.softwareubiquo.tarefas.models.Task;
 import br.ufg.softwareubiquo.tarefas.service.TaskService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
