@@ -5,8 +5,10 @@
 - scp -i "C:\Users\flavi\OneDrive\Área de Trabalho\software ubiquo\chave-aws-trab-ubiquo.pem" .\target\tarefas-0.0.1-SNAPSHOT.jar  ec2-user@ec2-18-211-13-14.compute-1.amazonaws.com:/home/ec2-user
 
 - Rodar na maquina
+ssh -i "C:\Users\flavi\OneDrive\Área de Trabalho\software ubiquo\chave-aws-trab-ubiquo.pem" ec2-user@ec2-18-211-13-14.compute-1.amazonaws.com pm2 start deploy.sh
+OBS: dentro do deploy.sh tem que ter o comando abaixo:
 - java -jar tarefas-0.0.1-SNAPSHOT.jar -spring.config.additional-location= application.properties
-obs: já o arquivo 'application.properties' já deve ter sido criado com as configurações do banco criado no aws
+OBS2: O arquivo 'application.properties' já deve ter sido criado com as configurações do banco criado no aws
 dados do banco: 
 spring.datasource.url=jdbc:postgresql://postgres-tarefa.clycomysalpe.us-east-1.rds.amazonaws.com:5432/task
 spring.datasource.username=postgres
