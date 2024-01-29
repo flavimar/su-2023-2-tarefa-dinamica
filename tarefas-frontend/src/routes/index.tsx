@@ -1,7 +1,8 @@
 import {Routes, Route, Navigate} from "react-router-dom";
 import {useDrawerContext} from "../shared/contexts";
 import {useEffect} from "react";
-import {Dashboard, ListagemTarefas} from "../pages";
+import {Dashboard, ListagemSalas,ListagemTarefas} from "../pages";
+import {DetalheTarefas} from "../pages/tarefas/DetalheTarefas";
 
 export const AppRoutes = () => {
     const {setDrawerOptions} = useDrawerContext();
@@ -14,16 +15,24 @@ export const AppRoutes = () => {
             },
             {
                 icon: 'task',
-                path: '/task',
+                path: '/tarefas',
                 label: 'Tarefas',
+            },
+            {
+                icon: 'classroom',
+                path: '/salas',
+                label: 'Salas',
             },
         ]);
     }, []);
     return(
         <Routes>
             <Route path="/pagina-inicial" element={<Dashboard/>} />
-            <Route path="/task" element={<ListagemTarefas/>} />
+            <Route path="/tarefas" element={<ListagemTarefas/>} />
+            <Route path="/salas" element={<ListagemSalas/>}/>
+            <Route path="/tarefas/detalhe/:name/:id" element={<DetalheTarefas/>} />
             <Route path="*" element={<Navigate to="/pagina-inicial" />}/>
+
         </Routes>
     );
 }

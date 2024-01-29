@@ -1,6 +1,8 @@
 import { Box, Button, Icon, Paper, TextField, useTheme } from '@mui/material';
+import {useMatch, useNavigate, useResolvedPath} from "react-router-dom";
 
-interface IBarraDeFerramentasProps {
+
+interface IFerramentasDaListagemProps {
     textoDaBusca?: string;
     mostrarInputBusca?: boolean;
     aoMudarTextoDeBusca?: (novoTexto: string) => void;
@@ -8,14 +10,14 @@ interface IBarraDeFerramentasProps {
     mostrarBotaoNovo?: boolean;
     aoClicarEmNovo?: () => void;
 }
-export const BarraDeFerramentas: React.FC<IBarraDeFerramentasProps> = ({
-                                                                           textoDaBusca = '',
-                                                                           aoMudarTextoDeBusca,
-                                                                           mostrarInputBusca = false,
-                                                                           aoClicarEmNovo,
-                                                                           textoBotaoNovo = 'Novo',
-                                                                           mostrarBotaoNovo = true,
-                                                                       }) => {
+export const BarraDeFerramentas: React.FC<IFerramentasDaListagemProps> = ({
+                                                                                 textoDaBusca = '',
+                                                                                 aoMudarTextoDeBusca,
+                                                                                 mostrarInputBusca = false,
+                                                                                 aoClicarEmNovo,
+                                                                                 textoBotaoNovo = 'Novo',
+                                                                                 mostrarBotaoNovo = true,
+                                                                             }) => {
     const theme = useTheme();
 
     return (
@@ -33,7 +35,7 @@ export const BarraDeFerramentas: React.FC<IBarraDeFerramentasProps> = ({
                 <TextField
                     size="small"
                     value={textoDaBusca}
-                    placeholder='Pesquisar...'
+                    placeholder={'Buscar'}
                     onChange={(e) => aoMudarTextoDeBusca?.(e.target.value)}
                 />
             )}
