@@ -14,6 +14,10 @@ public class RedisDataController {
     private  final StringRedisTemplate redisTemplate;
     @PostMapping("")
     public String getById(@RequestBody RedisDto key) {
-        return new String(redisTemplate.opsForValue().get(key.getKey()).getBytes(), StandardCharsets.UTF_8);
+        var value = redisTemplate.opsForValue().get(key.getKey());
+        if(value != null){
+            value =  new String(value.getBytes(), StandardCharsets.UTF_8);
+        }
+        return value;
     }
 }
