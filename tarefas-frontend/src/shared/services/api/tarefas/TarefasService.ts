@@ -16,6 +16,9 @@ export interface IDetalheTarefa {
     "weight"?: number,
     "type": string
 }
+export interface IRespondeAtividadeTarefa {
+    activity: string
+}
 
 
 
@@ -69,6 +72,14 @@ const create = async (dados: Omit<IDetalheTarefa, 'id'>): Promise<number | Error
 const updateById = async (id: number, dados: IDetalheTarefa): Promise<void | Error> => {
     try {
         await Api.put(`/task/${id}`, dados);
+    } catch (error) {
+        console.error(error);
+        return new Error((error as { message: string }).message || 'Erro ao atualizar o registro.');
+    }
+};
+const respondActivityById = async (id: number, dados: IRespondeAtividadeTarefa): Promise<void | Error> => {
+    try {
+        await Api.put(`/task/${id}/respond`, dados);
     } catch (error) {
         console.error(error);
         return new Error((error as { message: string }).message || 'Erro ao atualizar o registro.');
