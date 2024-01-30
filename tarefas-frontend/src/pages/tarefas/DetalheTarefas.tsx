@@ -9,6 +9,9 @@ import { VTextField, VForm, useVForm, IVFormErrors } from '../../shared/forms';
 import { LayoutBase } from '../../shared/layouts';
 import {FerramentasDeDetalhe} from "../../shared/components";
 import {Form} from "@unform/web";
+import {MqttApi} from "../../mqtt/MqttApi";
+import mqtt from "mqtt";
+import {RedisService} from "../../shared/services/api/redis/RedisService";
 
 
 interface IFormData {
@@ -33,24 +36,46 @@ export const DetalheTarefas: React.FC = () => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [nome, setNome] = useState('');
+    const [tipo, setTipo] = useState('');
+    const [descricao, setDescricao] = useState('');
+    const [peso, setPeso] = useState('');
+    const [usuario, setUsuario] = useState('');
 
     useEffect(() => {
-        console.log(id);
+
+        const user = localStorage.getItem("APP_USER") || '';
+        setUsuario(user);
         if (name !== 'cadastrar') {
-            setIsLoading(true);
+            RedisService.get({key: user+"_editar_tarefa_"+id+"_bloqueado"}).then((result) =>
+            {
+                if (result instanceof Error) {
+                    alert(result.message);
+                    navigate('/tarefas');
+                }else {
+                    const bool = (/true/i).test(result);
+                    if(bool){
+                        handleGetMessage(user+"_editar_tarefa_"+id+"_bloqueado");
+                        setIsLoading(true);
+                        alert("Esta tarefa está sendo editada em outro dispositivo");
+                    }else{
+                        setIsLoading(true);
+                        TarefasService.getById(Number(id))
+                            .then((result) => {
+                                setIsLoading(false);
 
-            TarefasService.getById(Number(id))
-                .then((result) => {
-                    setIsLoading(false);
-
-                    if (result instanceof Error) {
-                        alert(result.message);
-                        navigate('/tarefas');
-                    } else {
-                        setNome(result.name);
-                        formRef.current?.setData(result);
+                                if (result instanceof Error) {
+                                    alert(result.message);
+                                    navigate('/tarefas');
+                                } else {
+                                    setNome(result.name);
+                                    formRef.current?.setData(result);
+                                }
+                            });
                     }
-                });
+                }
+
+            })
+
         } else {
             formRef.current?.setData({
                 name: '',
@@ -61,9 +86,70 @@ export const DetalheTarefas: React.FC = () => {
         }
     }, [name]);
 
+    const handleMessage = () => {
+        const user = localStorage.getItem("APP_USER");
+        const tarefa = {
+            data:{
+                name: nome,
+                type: tipo,
+                weight: Number(peso),
+                description: descricao,
+            },
+            key: user + "_editar_tarefa_"+id
 
+
+        }
+        console.log("publish");
+        const client = MqttApi.connect();
+        client.on('connect', () => {
+            console.log("connected");
+            client.publish("cadastro-tarefa", JSON.stringify(tarefa))
+            client.end();
+        })
+
+
+    }
+    const handleGetMessage = (topic: string) => {
+        const client = MqttApi.connect();
+        client.on('connect', () => {
+            console.log("connected");
+            const cli = client.subscribe(topic,{
+                qos: 0,
+                rap: false,
+                rh: 0,
+            }, (error) => {
+                if (error) {
+                    console.log('MQTT Subscribe to topics error', error);
+                    return;
+                }
+            });
+        })
+        client.on('message', (topic, payload, packet) => {
+            const user = localStorage.getItem("APP_USER") || '';
+            console.log(user+"_editar_tarefa_"+id+"_bloqueado")
+            if(topic.toString() === user+"_editar_tarefa_"+id+"_bloqueado"){
+                RedisService.get({key:user+"_editar_tarefa_"+id}).then((result) => {
+                    if (result instanceof Error) {
+                        alert(result.message);
+                        navigate('/tarefas');
+                    }else{
+
+                        const data: IFormData = JSON.parse(JSON.stringify(result));
+                        setNome(data.name);
+                        formRef.current?.setData(data);
+                    }
+                })
+                setIsLoading(false);
+            }else if(topic === user+"_editar_tarefa_"+id){
+                const data:IFormData = JSON.parse(payload.toString());
+                formRef.current?.setData(data);
+            }
+            // console.log(topic)
+            // console.log(payload.toString());
+        })
+
+    }
     const handleSave = (dados: IFormData) => {
-        console.log(dados)
         formValidationSchema.
         validate(dados, { abortEarly: false })
             .then((dadosValidados) => {
@@ -81,7 +167,8 @@ export const DetalheTarefas: React.FC = () => {
                                 if (isSaveAndClose()) {
                                     navigate('/tarefas');
                                 } else {
-                                    navigate(`/tarefas/detalhe/${result}`);
+                                    console.log(result);
+                                    navigate(`/tarefas/detalhe/editar/${result}`);
                                 }
                             }
                         });
@@ -179,16 +266,21 @@ export const DetalheTarefas: React.FC = () => {
                                     name='type'
                                     label='Tipo de Tarefa'
                                     disabled={isLoading}
+                                    onChange={e => setTipo(e.target.value)}
+
                                 />
                             </Grid>
                         </Grid>
                         <Grid container item direction="row" spacing={2}>
                             <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
                                 <VTextField
+                                    type="number"
                                     fullWidth
                                     name='weight'
                                     label='Peso da Tarefa'
                                     disabled={isLoading}
+                                    onChange={e => setPeso(e.target.value)}
+
                                 />
                             </Grid>
                             <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
@@ -197,7 +289,14 @@ export const DetalheTarefas: React.FC = () => {
                                     name='description'
                                     label='Descrição'
                                     disabled={isLoading}
+                                    onChange={e => setDescricao(e.target.value)}
+
                                 />
+                            </Grid>
+                        </Grid>
+                        <Grid container item direction="row" spacing={2}>
+                            <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
+                                <Button onClick={()=>handleMessage()}>Rascunho</Button>
                             </Grid>
                         </Grid>
                     </Grid>

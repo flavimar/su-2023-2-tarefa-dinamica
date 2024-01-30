@@ -5,8 +5,8 @@ import {
     Box,
     Button,
     Card, CardActions,
-    CardContent, CardHeader,
-    Grid, Icon, IconButton, LinearProgress,
+    CardContent,
+    Grid, Icon, LinearProgress,
     Paper,
     Typography, useMediaQuery, useTheme
 } from "@mui/material";
@@ -71,8 +71,8 @@ export const ListagemTarefas : React.FC = () => {
                       alignItems="flex-start"
                 >
                     {rows.map(row => (
-                        <Grid item  xs={12} sm={12} md={6} lg={4} xl={2}>
-                            <Card>
+                        <Grid key={row.id} item  xs={12} sm={12} md={6} lg={4} xl={2}>
+                            <Card >
                                 <CardContent>
                                     <Typography gutterBottom variant="h5" component="div">
                                         {row.name}

@@ -6,6 +6,7 @@ interface IAuthContextData {
     logout: ()=> void;
     login:(email:string,password:string) => Promise<string | void>
 }
+
 interface  IAuthProviderProps {
     children: React.ReactNode;
 }
@@ -27,11 +28,15 @@ export const AuthProvider: React.FC<IAuthProviderProps> = ({children}) => {
             return result.message;
         }else {
             localStorage.setItem('APP_ACCESS_TOKEN',JSON.stringify(result.accessToken))
+            localStorage.setItem('APP_USER', result.email);
+            localStorage.setItem('APP_ROLE', result.role);
             setAccessToken(result.accessToken);
         }
     },[]);
     const handleLogout = useCallback(() => {
         localStorage.removeItem('APP_ACCESS_TOKEN')
+        localStorage.removeItem('APP_USER')
+        localStorage.removeItem('APP_ROLE')
         setAccessToken(undefined)
     },[]);
     const isAuthenticated = useMemo(() => !!accessToken, [accessToken]);
