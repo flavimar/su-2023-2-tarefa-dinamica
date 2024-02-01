@@ -43,7 +43,8 @@ export const ListagemTarefas : React.FC = () => {
                         alert(result.message);
                     } else {
                         alert('Registro apagado com sucesso!');
-                        navigate('/tarefas');
+                        window.location.reload();
+                        //navigate('/tarefas');
                     }
                 });
         }

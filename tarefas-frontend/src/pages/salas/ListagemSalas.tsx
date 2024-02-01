@@ -1,8 +1,18 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {LayoutBase} from "../../shared/layouts";
 import {BarraDeFerramentas} from "../../shared/components";
-import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
+import {
+    Grid,
+    LinearProgress,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow
+} from "@mui/material";
 import {IListagemSala, SalasService} from "../../shared/services/api/salas/SalasService";
 
 export const ListagemSalas : React.FC = () => {
@@ -32,6 +42,12 @@ export const ListagemSalas : React.FC = () => {
                                     aoClicarEmNovo={() => navigate('/salas/detalhe/cadastrar')}  />
             }
         >
+            <Grid container direction="column" padding={2} spacing={2}>
+            {isLoading && (
+                <Grid item>
+                    <LinearProgress variant='indeterminate' />
+                </Grid>
+            )}
             <TableContainer component={Paper} variant="outlined" sx={{m:1 , width:'auto'}}>
                 <Table>
                     <TableHead>
@@ -58,6 +74,7 @@ export const ListagemSalas : React.FC = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
+            </Grid>
         </LayoutBase>
     )
 }
