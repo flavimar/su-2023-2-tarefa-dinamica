@@ -27,7 +27,7 @@ public class Task {
     @Column(name = "ds_tarefa")
     private String description;
     @Column(name = "nr_peso")
-    private int weigth;
+    private int weight;
     @NotBlank
     @Column(name = "cs_tipo",nullable = false)
     private TaskType type;
